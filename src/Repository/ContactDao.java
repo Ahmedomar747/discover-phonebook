@@ -38,5 +38,19 @@ public class ContactDao {
         PreparedStatement ps = conn.prepareStatement("SELECT CONTACT.name, GROUP_CONCAT(PHONE_NUMBER) phonelist,  GROUP_CONCAT(PHONE_TYPE)  typelist FROM CONTACT INNER JOIN PHONE ON CONTACT.name = PHONE.Name GROUP BY CONTACT.name HAVING name like ?");
         return ps.executeQuery();
     }
+
+    public ResultSet getFavoriteContacts(Connection conn) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("SELECT CONTACT.name, GROUP_CONCAT(PHONE_NUMBER) phonelist,  GROUP_CONCAT(PHONE_TYPE) typelist " 
+        + "FROM CONTACT INNER JOIN PHONE ON CONTACT.name = PHONE.Name "
+        + "GROUP BY CONTACT.name"
+        +" HAVING is_favorite = 1");
+        return ps.executeQuery();
+    }
+
+    public int setContactAsFavorite(Connection conn, String name) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("UPDATE CONTACT SET is_favorite = 1 WHERE name = ?");
+        ps.setString(1, name);
+        return ps.executeUpdate();
+    }
     
 }

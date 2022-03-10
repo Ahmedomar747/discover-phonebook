@@ -9,19 +9,16 @@ import java.util.List;
 import Model.Contact;
 import Model.Phone;
 import Repository.ContactDao;
-import Repository.FavoriteDao;
 import Repository.PhoneDao;
 
 public class ContactService {
 
     private final ContactDao contactDao;
-    private final FavoriteDao favoriteDao;
     private final PhoneDao phoneDao;
 
 
-    public ContactService(ContactDao contactDao, FavoriteDao favoriteDao, PhoneDao phoneDao) {
+    public ContactService(ContactDao contactDao, PhoneDao phoneDao) {
         this.contactDao = contactDao;
-        this.favoriteDao = favoriteDao;
         this.phoneDao = phoneDao;
     }
 
@@ -40,7 +37,7 @@ public class ContactService {
     public List<Contact> getFavoriteContacts() throws SQLException, ClassNotFoundException {
         try (Connection conn = DatabaseService.getConnection()) {
             List<Contact> contactList = new ArrayList<>();
-            ResultSet rs = favoriteDao.getFavoriteContacts(conn);
+            ResultSet rs = contactDao.getFavoriteContacts(conn);
             while(rs.next()) {
                 Contact c = mapContact(rs);
                 contactList.add(c);
@@ -74,7 +71,7 @@ public class ContactService {
 
     public Boolean setContactAsFavorite(String name) throws SQLException, ClassNotFoundException {
         try (Connection conn = DatabaseService.getConnection()) {
-            int result = favoriteDao.setContactAsFavorite(conn, name);
+            int result = contactDao.setContactAsFavorite(conn, name);
             conn.commit();
             return (result > 0);
         }
