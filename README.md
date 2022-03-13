@@ -13,6 +13,7 @@ The workspace contains two folders and two files, where:
 
 Meanwhile, the compiled output files will be generated in the `bin` folder by default.
 
+Before running the application, please unzip the sqlite jar file  found in lib/ directory and copy the org and native folders and paste them to bin/ directory to prevent errors. 
 
 ## Dependency Management
 
