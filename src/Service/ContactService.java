@@ -16,7 +16,6 @@ public class ContactService {
     private final ContactDao contactDao;
     private final PhoneDao phoneDao;
 
-
     public ContactService(ContactDao contactDao, PhoneDao phoneDao) {
         this.contactDao = contactDao;
         this.phoneDao = phoneDao;
@@ -25,10 +24,11 @@ public class ContactService {
     public List<Contact> getContacts() throws SQLException, ClassNotFoundException {
         try (Connection conn = DatabaseService.getConnection()) {
             List<Contact> contactList = new ArrayList<>();
-            ResultSet rs = contactDao.getContacts(conn);
-            while(rs.next()) {
-                Contact c = mapContact(rs);
-                contactList.add(c);
+            try (ResultSet rs = contactDao.getContacts(conn)) {
+                while (rs.next()) {
+                    Contact c = mapContact(rs);
+                    contactList.add(c);
+                }
             }
             return contactList;
         }
@@ -37,22 +37,24 @@ public class ContactService {
     public List<Contact> getFavoriteContacts() throws SQLException, ClassNotFoundException {
         try (Connection conn = DatabaseService.getConnection()) {
             List<Contact> contactList = new ArrayList<>();
-            ResultSet rs = contactDao.getFavoriteContacts(conn);
-            while(rs.next()) {
-                Contact c = mapContact(rs);
-                contactList.add(c);
+            try (ResultSet rs = contactDao.getFavoriteContacts(conn)) {
+                while (rs.next()) {
+                    Contact c = mapContact(rs);
+                    contactList.add(c);
+                }
             }
             return contactList;
-        } 
+        }
     }
 
     public List<Contact> getContactsByName(String nameInput) throws ClassNotFoundException, SQLException {
         try (Connection conn = DatabaseService.getConnection()) {
             List<Contact> contactList = new ArrayList<>();
-            ResultSet rs = contactDao.getContactsByName(conn, nameInput);
-            while(rs.next()) {
-                Contact c = mapContact(rs);
-                contactList.add(c);
+            try (ResultSet rs = contactDao.getContactsByName(conn, nameInput)) {
+                while (rs.next()) {
+                    Contact c = mapContact(rs);
+                    contactList.add(c);
+                }
             }
             return contactList;
         }
@@ -60,12 +62,13 @@ public class ContactService {
 
     public Contact getContactByPhone(String phoneNumber) throws ClassNotFoundException, SQLException {
         try (Connection conn = DatabaseService.getConnection()) {
-            ResultSet rs = contactDao.getContactByPhone(conn, phoneNumber);
-            if(rs.next()) {
-                Contact c = mapContact(rs);
-                return c;
+            try (ResultSet rs = contactDao.getContactByPhone(conn, phoneNumber)) {
+                if (rs.next()) {
+                    Contact c = mapContact(rs);
+                    return c;
+                }
+                return null;
             }
-            return null;
         }
     }
 
@@ -88,19 +91,19 @@ public class ContactService {
 
     public Contact updateContact(Contact contact) throws SQLException, ClassNotFoundException {
         try (Connection conn = DatabaseService.getConnection()) {
-            contactDao.updateContact(conn, contact.getName());
+            int result = contactDao.updateContact(conn, contact.getName());
             phoneDao.updatePhoneNumber(conn, contact.getName(), contact.getPhoneList());
             conn.commit();
-            return contact;
+            return result > 0 ? contact : null;
         }
     }
 
     public Contact insertContact(Contact contact) throws SQLException, ClassNotFoundException {
         try (Connection conn = DatabaseService.getConnection()) {
-            contactDao.insertContact(conn, contact.getName());
+            int result = contactDao.insertContact(conn, contact.getName());
             phoneDao.insertPhoneNumber(conn, contact.getName(), contact.getPhoneList());
             conn.commit();
-            return contact;
+            return result > 0 ? contact : null;
         }
     }
 
@@ -110,7 +113,7 @@ public class ContactService {
         String[] phoneList = rs.getString("phonelist").split(",");
         String[] typeList = rs.getString("typelist").split(",");
         List<Phone> pList = new ArrayList<>();
-        for (int i = 0; i < phoneList.length ; i++) {
+        for (int i = 0; i < phoneList.length; i++) {
             Phone p = new Phone();
             p.setPhoneNumber(phoneList[i]);
             p.setPhoneType(typeList[i]);

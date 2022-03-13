@@ -21,6 +21,7 @@ public class ContactDao {
 
     public int deleteContact(Connection conn, String name) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("DELETE FROM CONTACT WHERE name = ?");
+        ps.setString(1, name);
         return ps.executeUpdate();
     }
 
@@ -30,12 +31,14 @@ public class ContactDao {
     }
 
     public ResultSet getContactByPhone(Connection conn, String phoneNumber) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("SELECT CONTACT.name, GROUP_CONCAT(PHONE_NUMBER) phonelist,  GROUP_CONCAT(PHONE_TYPE)  typelist FROM CONTACT INNER JOIN PHONE ON CONTACT.name = PHONE.Name GROUP BY CONTACT.name HAVING phone = ?");
+        PreparedStatement ps = conn.prepareStatement("SELECT CONTACT.name, GROUP_CONCAT(PHONE_NUMBER) phonelist,  GROUP_CONCAT(PHONE_TYPE)  typelist FROM CONTACT INNER JOIN PHONE ON CONTACT.name = PHONE.Name GROUP BY CONTACT.name HAVING Phone.PHONE_NUMBER = ?");
+        ps.setString(1, phoneNumber);
         return ps.executeQuery();
     }
 
     public ResultSet getContactsByName(Connection conn, String nameInput) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("SELECT CONTACT.name, GROUP_CONCAT(PHONE_NUMBER) phonelist,  GROUP_CONCAT(PHONE_TYPE)  typelist FROM CONTACT INNER JOIN PHONE ON CONTACT.name = PHONE.Name GROUP BY CONTACT.name HAVING name like ?");
+        PreparedStatement ps = conn.prepareStatement("SELECT CONTACT.name, GROUP_CONCAT(PHONE_NUMBER) phonelist,  GROUP_CONCAT(PHONE_TYPE)  typelist FROM CONTACT INNER JOIN PHONE ON CONTACT.name = PHONE.Name GROUP BY CONTACT.name HAVING CONTACT.name like ?");
+        ps.setString(1, nameInput + "%");
         return ps.executeQuery();
     }
 

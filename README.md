@@ -1,18 +1,34 @@
 ## Getting Started
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+This is a phonebook simulation on a small scale. This project relies on a self-contained database 'phonebook.db' using a sqlite.  
 
 ## Folder Structure
 
-The workspace contains two folders by default, where:
+The workspace contains two folders and two files, where:
 
 - `src`: the folder to maintain sources
 - `lib`: the folder to maintain dependencies
+- `ddsl.sql`: the file to maintain data definition(i.e. database name and tables) for the database.
+- `phonebook.db`: the file to maintain the self-contained database.
 
 Meanwhile, the compiled output files will be generated in the `bin` folder by default.
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
 
 ## Dependency Management
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+This projects relies on the sqlite jdbc dependecy version:3.7.2
+
+## Operating the Applicaiton
+
+Interaction with the application require passing arguments throught CLI for example:
+- `java Main getAllContacts`: shows all contacts.
+
+The Operations available below:
+- `getFavoriteContacts`: shows all favorite contacts.
+- `getContactsByName [name]`: shows all contacts starting with placeholder `[name]`.
+- `getContactsByPhone [phone]`: shows all contacts with place `[phone]`.
+- `getAllContacts`: shows all contacts.
+- `insertContact [name] [phone1] [phone1type] [phone2] [phone2type] .....`: registers new contact with placeholder `[name]` and atleast one placeholder for both `[phone]` and `[phone2type]`.
+- `updateContact [name] [phone1] [phone1type] [phone2] [phone2type] .....`: updates existing contact with placeholder `[name]` and atleast one placeholder for both `[phone]` and `[phone2type]`.
+- `deleteContact [name]`: deletes contact with matching placeholder `[name]`.
+- `markAsFavorite [name]`: marks contact as favorite with matching placeholder `[name]`.
